@@ -7,6 +7,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import ru.ospos.npf.commons.SomeConfig;
+import ru.ospos.npf.commons.autoconfigure.PocardTestSearch;
 
 @SpringBootApplication
 public class PocardApplication implements CommandLineRunner {
@@ -16,6 +17,9 @@ public class PocardApplication implements CommandLineRunner {
     @Autowired
     private SomeConfig someConfig;
 
+    @Autowired
+    private PocardTestSearch pocardTestSearch;
+
     public static void main(String[] args) {
         SpringApplication.run(PocardApplication.class, args);
     }
@@ -23,5 +27,9 @@ public class PocardApplication implements CommandLineRunner {
     @Override
     public void run(String... args) {
         LOGGER.info(someConfig.check());
+
+        Long maxId = pocardTestSearch.getMaxId();
+
+        LOGGER.info(maxId.toString());
     }
 }

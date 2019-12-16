@@ -1,0 +1,7 @@
+spring:
+  cloud:
+    config:
+      uri: http://localhost:8889
+      username: ospos-cs
+      password: o$p0s123
+      fail-fast: true

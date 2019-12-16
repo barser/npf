@@ -1,3 +1,1 @@
-ospos:
-  greeter:
-    url: pocard-url
+spring.application.name: npf-pocard
