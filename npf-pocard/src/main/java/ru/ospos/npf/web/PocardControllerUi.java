@@ -14,8 +14,9 @@ public class PocardControllerUi {
     @GetMapping("/pocard")
     public String index() {
 
-        long maxId = pocardRepository.getMaxId();
+        //long maxId = pocardRepository.getMaxId();
 
-        return "index";
+        //return "index";
+        return "common";
     }
 }
