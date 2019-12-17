@@ -19,17 +19,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.oracle.ojdbc</groupId>
-            <artifactId>ojdbc8</artifactId>
-            <version>${oracle-ojdbc8-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.oracle.ojdbc</groupId>
-            <artifactId>orai18n</artifactId>
-            <version>${oracle-ojdbc8-version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>ru.ospos</groupId>
             <artifactId>npf-commons-spring-boot-starter</artifactId>
         </dependency>
@@ -38,11 +27,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
         </dependency>
-        <dependency>
-            <groupId>ru.ospos</groupId>
-            <artifactId>npf-commons</artifactId>
-            <scope>compile</scope>
-        </dependency>
+
     </dependencies>
 
     <build>

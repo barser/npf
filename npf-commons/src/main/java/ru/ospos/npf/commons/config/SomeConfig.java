@@ -1,4 +1,4 @@
-package ru.ospos.npf.commons;
+package ru.ospos.npf.commons.config;
 
 public class SomeConfig {
 

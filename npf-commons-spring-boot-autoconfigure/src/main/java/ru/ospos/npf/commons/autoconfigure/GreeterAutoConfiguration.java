@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClas
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ru.ospos.npf.commons.SomeConfig;
+import ru.ospos.npf.commons.config.SomeConfig;
 
 @Configuration
 @ConditionalOnClass(OracleDriver.class)

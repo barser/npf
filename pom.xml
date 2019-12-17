@@ -12,14 +12,20 @@
     <name>NPF</name>
     <description>NPF Services</description>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>11</java.version>
-        <maven.compiler.release>11</maven.compiler.release>
-        <oracle-ojdbc8-version>19.3.0.0</oracle-ojdbc8-version>
-        <spring-cloud.version>Greenwich.SR1</spring-cloud.version>
-    </properties>
+    <organization>
+        <name>JSC OSPOS</name>
+        <url>http://ospos.ru</url>
+    </organization>
+
+    <developers>
+        <developer>
+            <id>barser</id>
+            <name>Sergey V. Baranov</name>
+            <email>s.baranov@ospos.ru</email>
+            <organization>JSC OSPOS</organization>
+            <timezone>+3</timezone>
+        </developer>
+    </developers>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -27,6 +33,16 @@
         <version>2.2.2.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>11</java.version>
+        <maven.compiler.release>11</maven.compiler.release>
+        <oracle-ojdbc8-version>19.3.0.0</oracle-ojdbc8-version>
+        <spring-cloud.version>Greenwich.SR1</spring-cloud.version>
+        <lombok.version>1.18.10</lombok.version>
+    </properties>
 
     <modules>
         <module>npf-pocard</module>
@@ -36,6 +52,12 @@
     </modules>
 
     <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -54,6 +76,11 @@
                 <groupId>ru.ospos</groupId>
                 <artifactId>npf-commons-spring-boot-starter</artifactId>
                 <version>${version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -98,8 +125,34 @@
             <!--                </executions>-->
             <!--            </plugin>-->
 
+            <plugin>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok-maven-plugin</artifactId>
+                <version>${lombok.version}.0</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>delombok</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 
+    <!--    <scm>-->
+    <!--        <connection>scm:git:http://teamcity:3000/ospos/npf.git</connection>-->
+    <!--        <developerConnection>scm:git:http://teamcity:3000/ospos/npf.git</developerConnection>-->
+    <!--        <url>http://teamcity:3000/ospos/npf</url>-->
+    <!--    </scm>-->
+
+    <!--    <distributionManagement>-->
+    <!--        <repository>-->
+    <!--            <id>ospos-nexus</id>-->
+    <!--            <url>http://teamcity:8082/repository/maven-releases/</url>-->
+    <!--        </repository>-->
+    <!--    </distributionManagement>-->
 
 </project>
