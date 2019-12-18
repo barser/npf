@@ -49,6 +49,7 @@
         <module>npf-commons-spring-boot-starter</module>
         <module>npf-commons-spring-boot-autoconfigure</module>
         <module>npf-commons</module>
+        <module>npf-commons-web</module>
     </modules>
 
     <dependencies>
