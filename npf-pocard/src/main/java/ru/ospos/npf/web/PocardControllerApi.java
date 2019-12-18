@@ -66,4 +66,12 @@ public class PocardControllerApi {
     public OperationResult setReady(long pocardId) {
         return OperationResult.error("Не реализовано!");
     }
+
+    @GetMapping("/test")
+    public OperationResult test() {
+
+        List<Pocard> first3ByAmountGreaterThanEqual = pocardRepository.findFirst3ByAmountGreaterThanEqual(BigDecimal.valueOf(100_000));
+
+        return OperationResult.success();
+    }
 }
