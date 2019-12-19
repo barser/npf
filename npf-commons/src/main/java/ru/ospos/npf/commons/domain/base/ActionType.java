@@ -1,41 +1,27 @@
 package ru.ospos.npf.commons.domain.base;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import lombok.Getter;
 
+import javax.persistence.*;
+import java.io.Serializable;
+
+/**
+ * Тип действия.
+ */
+@Getter
 @Entity
-@Table(name = "ACTION_TYPES")
-public class ActionType {
+@Table(name = "ACTION_TYPES", schema = "CDM")
+public class ActionType implements Serializable {
 
+    private static final long serialVersionUID = -7240773661337041754L;
+    /**
+     * Уникальный идентификатор.
+     */
     @Id
     private Long id;
 
+    /**
+     * Наименование действия.
+     */
     private String description;
-
-    private Boolean visible;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Boolean getVisible() {
-        return visible;
-    }
-
-    public void setVisible(Boolean visible) {
-        this.visible = visible;
-    }
 }

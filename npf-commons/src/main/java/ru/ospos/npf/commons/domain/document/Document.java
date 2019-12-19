@@ -3,22 +3,30 @@ package ru.ospos.npf.commons.domain.document;
 import lombok.Getter;
 import lombok.Setter;
 import ru.ospos.npf.commons.domain.base.Action;
+import ru.ospos.npf.commons.domain.base.FileStorage;
 import ru.ospos.npf.commons.domain.user.Operator;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * Документ.
+ * Общий базовый класс для различных видов документов.
+ */
 @Getter
 @Setter
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "DOCUMENTS")
-public class Document {
+public class Document implements Serializable {
+
+    private static final long serialVersionUID = 7298229790243852205L;
 
     @Id
-    @SequenceGenerator(name = "documentSeqGenerator", sequenceName = "DOCUMENT_SEQ", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "documentSeqGenerator")
+    @SequenceGenerator(name = "g_document", sequenceName = "DOCUMENT_SEQ", schema = "CDM", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "g_document")
     private Long id;
 
     /**
@@ -36,10 +44,9 @@ public class Document {
     /**
      * Ссылка на файл.
      */
-    //TODO
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "FK_FILE")
-//    private FileStorage file;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "FK_FILE")
+    private FileStorage file;
 
     /**
      * Наименование документа.
@@ -143,13 +150,12 @@ public class Document {
 //    private TreeNode treenode;
 //    private String title;
 
-    //TODO - реализовать.
-//    /**
-//     * Регистрационная карточка документа.
-//     */
-//    @ManyToOne
-//    @JoinColumn(name = "FK_REGISTRATION_CARD")
-//    private RegistrationCard registrationCard;
+    /**
+     * Регистрационная карточка документа.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "FK_REGISTRATION_CARD")
+    private RegistrationCard registrationCard;
 
     // private DocumentCategory documentOut;
     // private DocumentCategory documentWithAccount;

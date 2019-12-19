@@ -1,33 +1,33 @@
 package ru.ospos.npf.commons.domain.user;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 
+/**
+ * Пользователь системы.
+ */
+@Getter
+@Setter
 @Entity
 @Table(name = "OPERATORS")
-public class Operator {
+public class Operator implements Serializable {
+
+    private static final long serialVersionUID = 8035954403056027194L;
 
     @Id
     @Column(name = "FK_EMPLOYEE")
-    private Long id;
+    private Integer id;
 
+    /**
+     * Логин пользователя.
+     */
+    @Column(name = "LOGIN")
     private String login;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
 }

@@ -19,6 +19,8 @@ import java.time.LocalDate;
 @PrimaryKeyJoinColumn(name = "FK_DOCUMENT")
 public class Pocard extends Document {
 
+    private static final long serialVersionUID = 2753288901641755016L;
+
     /**
      * Номер платежного поручения.
      */
@@ -40,7 +42,7 @@ public class Pocard extends Document {
     /**
      * Сумма.
      */
-    @Column(name = "MSUMMA")
+    @Column(name = "MSUMMA", columnDefinition = "FLOAT")
     private BigDecimal amount;
 
     /**
@@ -263,7 +265,7 @@ public class Pocard extends Document {
     /**
      * Комиссия.
      */
-    @Column(name = "COMMISSION")
+    @Column(name = "COMMISSION", columnDefinition = "FLOAT")
     private BigDecimal commission;
 
     /**
@@ -276,24 +278,24 @@ public class Pocard extends Document {
     /**
      * Часть суммы для ГФПН.
      */
-    @Column(name = "GFPN_SUM", nullable = false)
+    @Column(name = "GFPN_SUM", nullable = false, columnDefinition = "FLOAT")
     private BigDecimal gfpnAmount;
 
     /**
      * Часть суммы для КИТФ.
      */
-    @Column(name = "KITF_SUM", nullable = false)
+    @Column(name = "KITF_SUM", nullable = false, columnDefinition = "FLOAT")
     private BigDecimal kitfAmount;
 
     /**
      * Часть суммы для НАСЛ.
      */
-    @Column(name = "NASL_SUM", nullable = false)
+    @Column(name = "NASL_SUM", nullable = false, columnDefinition = "FLOAT")
     private BigDecimal naslAmount;
 
     /**
      * Часть суммы для ПРАФ.
      */
-    @Column(name = "PRAF_SUM", nullable = false)
+    @Column(name = "PRAF_SUM", nullable = false, columnDefinition = "FLOAT")
     private BigDecimal prafAmount;
 }
