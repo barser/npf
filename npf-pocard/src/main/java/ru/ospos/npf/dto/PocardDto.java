@@ -13,7 +13,7 @@ import java.util.Collection;
 @ToString
 public class PocardDto {
 
-    private long id;
+    private Integer id;
     private int number;
     private LocalDate date;
     private String comments;

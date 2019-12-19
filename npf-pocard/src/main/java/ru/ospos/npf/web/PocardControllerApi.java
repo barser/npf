@@ -6,9 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.ospos.npf.commons.dao.document.PocardRepository;
-import ru.ospos.npf.commons.domain.base.Action;
 import ru.ospos.npf.commons.domain.document.Pocard;
-import ru.ospos.npf.commons.domain.user.Operator;
 import ru.ospos.npf.commons.util.DataResult;
 import ru.ospos.npf.commons.util.OperationResult;
 import ru.ospos.npf.dto.PocardDto;
@@ -89,7 +87,10 @@ public class PocardControllerApi {
     @GetMapping("/test")
     public OperationResult test() {
 
-        new Action();
+//        Document document = entityManager.find(Document.class, 25191988);
+//        TreeNode treeNode = entityManager.getReference(TreeNode.class, 3050);
+//        document.addTreeNode(treeNode);
+/*
 
         List<Pocard> first3ByAmountGreaterThanEqual = pocardRepository.findFirst3ByAmountGreaterThanEqual(BigDecimal.valueOf(100_000));
         Operator baranov = entityManager.find(Operator.class, 172);
@@ -97,6 +98,7 @@ public class PocardControllerApi {
         entityManager.createQuery("select d from Document d order by d.id desc")
                 .setMaxResults(100)
                 .getResultList();
+ */
 
         return OperationResult.success();
     }

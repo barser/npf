@@ -10,4 +10,32 @@
     <root level="INFO">
         <appender-ref ref="STDOUT" />
     </root>
+
+
+    <!-- Hibernate SQL logs -->
+
+    <appender name="SQLROLLINGFILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>/log/hibernate_sql.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/log/prev/hibernate_sql.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <layout>
+            <pattern>%-4date | %msg %n</pattern>
+        </layout>
+    </appender>
+
+    <logger name="org.hibernate.SQL" additivity="false" >
+        <level value="DEBUG" />
+        <appender-ref ref="SQLROLLINGFILE" />
+    </logger>
+
+    <logger name="org.hibernate.type" additivity="false" >
+        <level value="TRACE" />
+        <appender-ref ref="SQLROLLINGFILE" />
+    </logger>
+
 </configuration>

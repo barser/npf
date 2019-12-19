@@ -22,7 +22,7 @@ public class FileStorage implements Serializable {
     @Id
     @SequenceGenerator(name = "g_file_storage", sequenceName = "FILE_SEQ", schema = "CDM", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "g_file_storage")
-    private Long id;
+    private Integer id;
 
     @Override
     public int hashCode() {

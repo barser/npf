@@ -21,7 +21,7 @@ public class RegistrationCard implements Serializable {
     @Id
     @SequenceGenerator(name = "g_registration_card", sequenceName = "REGISTRATION_CARD_SEQ", schema = "CDM", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "g_registration_card")
-    private Long id;
+    private Integer id;
 
     /**
      *

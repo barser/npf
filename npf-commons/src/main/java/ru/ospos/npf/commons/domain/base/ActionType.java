@@ -18,7 +18,7 @@ public class ActionType implements Serializable {
      * Уникальный идентификатор.
      */
     @Id
-    private Long id;
+    private Integer id;
 
     /**
      * Наименование действия.

@@ -4,12 +4,15 @@ import lombok.Getter;
 import lombok.Setter;
 import ru.ospos.npf.commons.domain.base.Action;
 import ru.ospos.npf.commons.domain.base.FileStorage;
+import ru.ospos.npf.commons.domain.base.TreeNode;
 import ru.ospos.npf.commons.domain.user.Operator;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Документ.
@@ -27,7 +30,7 @@ public class Document implements Serializable {
     @Id
     @SequenceGenerator(name = "g_document", sequenceName = "DOCUMENT_SEQ", schema = "CDM", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "g_document")
-    private Long id;
+    private Integer id;
 
     /**
      * Тип документа.
@@ -144,12 +147,6 @@ public class Document implements Serializable {
     @JoinColumn(name = "FK_ORIG_BARCODE_SCANED")
     private Action originalBarcodeScaned;
 
-//    @Deprecated
-//    @ManyToOne
-//    @JoinColumn(name = "FK_TREENODE")
-//    private TreeNode treenode;
-//    private String title;
-
     /**
      * Регистрационная карточка документа.
      */
@@ -243,4 +240,22 @@ public class Document implements Serializable {
      */
     @Column(name = "FK_DOCUMENT_STATE")
     private Integer documentState;
+
+    @ManyToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    })
+    @JoinTable(name = "DOCUMENT_TREENODES",
+            joinColumns = @JoinColumn(name = "FK_DOCUMENT"),
+            inverseJoinColumns = @JoinColumn(name = "FK_TREENODE")
+    )
+    private Set<TreeNode> treeNodes = new HashSet<>();
+
+    public void addTreeNode(TreeNode treeNode) {
+        treeNodes.add(treeNode);
+    }
+
+    public void removeTreeNode(TreeNode treeNode) {
+        treeNodes.remove(treeNode);
+    }
 }

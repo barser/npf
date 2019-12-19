@@ -17,7 +17,7 @@ public class PaymentType implements Serializable {
     private static final long serialVersionUID = -4299529218648599442L;
 
     @Id
-    private long id;
+    private Integer id;
 
     private String description;
 }

@@ -22,7 +22,7 @@ public class Action implements Serializable {
     @Id
     @SequenceGenerator(name = "g_action", sequenceName = "ACTION_SEQ", schema = "CDM", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "g_action")
-    private Long id;
+    private Integer id;
 
     /**
      * Тип действия.
