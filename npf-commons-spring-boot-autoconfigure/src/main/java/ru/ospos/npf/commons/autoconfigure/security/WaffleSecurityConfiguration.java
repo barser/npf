@@ -12,7 +12,7 @@ import waffle.spring.NegotiateSecurityFilter;
 import waffle.spring.NegotiateSecurityFilterEntryPoint;
 import waffle.windows.auth.impl.WindowsAuthProviderImpl;
 
-//@Profile("dev,prod")
+@Profile("!external")
 @Configuration
 public class WaffleSecurityConfiguration {
 

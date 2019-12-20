@@ -1,7 +1,6 @@
 package ru.ospos.npf.commons.autoconfigure.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.ldap.core.support.LdapContextSource;
@@ -13,7 +12,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import waffle.spring.NegotiateSecurityFilter;
 import waffle.spring.NegotiateSecurityFilterEntryPoint;
 
-//@Profile("dev,prod")
+@Profile("!external")
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfigurationLdap extends WebSecurityConfigurerAdapter {
@@ -44,6 +43,9 @@ public class WebSecurityConfigurationLdap extends WebSecurityConfigurerAdapter {
     @Override
     @Autowired
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication();
+        auth.ldapAuthentication().contextSource(ldapContextSource)
+                .userSearchBase("ou=users,ou=ospos,ou=group of companies,DC=gazfond,DC=local")
+                .userSearchFilter("(&(userPrincipalName={0})(objectClass=user))")
+                .and().inMemoryAuthentication();
     }
 }
