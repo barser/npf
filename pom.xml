@@ -156,4 +156,18 @@
     <!--        </repository>-->
     <!--    </distributionManagement>-->
 
+    <profiles>
+        <profile>
+            <id>external</id>
+            <repositories>
+                <repository>
+                    <id>barser</id>
+                    <name>barser.ru-releases</name>
+                    <url>http://barser.ru:8081/artifactory/ext-release-local</url>
+                </repository>
+            </repositories>
+        </profile>
+
+    </profiles>
+
 </project>
