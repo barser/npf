@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  ru.ospos.npf.commons.autoconfigure.GreeterAutoConfiguration
+  ru.ospos.npf.commons.autoconfigure.GreeterAutoConfiguration,\
+  ru.ospos.npf.commons.autoconfigure.security.WaffleSecurityConfiguration

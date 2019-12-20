@@ -1,6 +1,7 @@
 package ru.ospos.npf.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +14,7 @@ import ru.ospos.npf.dto.PocardDto;
 
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -85,7 +87,7 @@ public class PocardControllerApi {
 
     @Transactional
     @GetMapping("/test")
-    public OperationResult test() {
+    public OperationResult test(Authentication auth) {
 
 //        Document document = entityManager.find(Document.class, 25191988);
 //        TreeNode treeNode = entityManager.getReference(TreeNode.class, 3050);
