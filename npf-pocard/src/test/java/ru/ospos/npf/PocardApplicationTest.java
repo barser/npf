@@ -36,18 +36,6 @@ public class PocardApplicationTest {
     private SearchController searchController;
 
     @Test
-    public void test0() {
-
-        var document = new Document();
-        var treeNode = new TreeNode();
-        document.addTreeNode(treeNode);
-
-        Assert.assertTrue(document.getTreeNodes().contains(treeNode));
-
-        LOGGER.info("TEST 0 - DOMAIN MODEL - PASSED.");
-    }
-
-    @Test
     public void test1() {
 
         Environment environment = applicationContext.getEnvironment();
