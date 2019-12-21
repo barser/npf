@@ -11,6 +11,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.ospos.npf.commons.dao.document.PocardRepository;
 import ru.ospos.npf.commons.domain.document.Pocard;
+import ru.ospos.npf.commons.util.DataResult;
+import ru.ospos.npf.dto.Search;
+import ru.ospos.npf.web.SearchController;
 
 import java.util.List;
 
@@ -26,6 +29,9 @@ public class PocardApplicationTest {
     @Autowired
     private ApplicationContext applicationContext;
 
+    @Autowired
+    private SearchController searchController;
+
     @Test
     public void test1() {
 
@@ -40,5 +46,14 @@ public class PocardApplicationTest {
         List<Pocard> all = pocardRepository.findAll();
         Assert.assertEquals(0, all.size());
         LOGGER.info("TEST 2 PASSED.");
+    }
+
+    @Test
+    public void test3() {
+
+        DataResult<Search> searchDataResult = searchController.create(new Search());
+        Assert.assertNotNull(searchDataResult);
+
+        LOGGER.info("TEST 3 PASSED.");
     }
 }
