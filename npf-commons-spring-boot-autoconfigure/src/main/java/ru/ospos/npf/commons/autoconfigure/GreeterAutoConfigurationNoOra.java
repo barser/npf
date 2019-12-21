@@ -13,6 +13,6 @@ public class GreeterAutoConfigurationNoOra {
     @ConditionalOnMissingClass
     public SomeConfig greetingConfig() {
 
-        return new SomeConfig("NO ORA DRIVER FOUND - USE POSTGRES");
+        return new SomeConfig("NO ORA DRIVER FOUND - USE H2");
     }
 }

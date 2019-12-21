@@ -223,7 +223,7 @@ public class Pocard extends Document {
      * Статус платежа.
      */
     @Column(name = "STATUS")
-    private int status;
+    private Integer status;
 
     /**
      * Название договора с контрагентом.
