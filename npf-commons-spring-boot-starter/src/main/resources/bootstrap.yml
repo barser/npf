@@ -5,3 +5,11 @@ spring:
       username: ${NPF_CFG_USER:ospos-cs}
       password: ${NPF_CFG_PASSWORD:o$p0s123}
       fail-fast: true
+
+---
+spring:
+  profiles: localconfig
+  cloud:
+    config:
+      enabled: false
+

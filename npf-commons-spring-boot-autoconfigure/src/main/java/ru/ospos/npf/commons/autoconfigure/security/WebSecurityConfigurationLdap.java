@@ -20,7 +20,7 @@ import waffle.spring.NegotiateSecurityFilterEntryPoint;
 import waffle.spring.WindowsAuthenticationProvider;
 import waffle.windows.auth.impl.WindowsAuthProviderImpl;
 
-@Profile("!external")
+@Profile("!localconfig")
 @Configuration
 @EnableGlobalMethodSecurity(
         prePostEnabled = true,

@@ -2,4 +2,5 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   ru.ospos.npf.commons.autoconfigure.GreeterAutoConfiguration,\
   ru.ospos.npf.commons.autoconfigure.JacksonDatatypeConfiguration,\
   ru.ospos.npf.commons.autoconfigure.security.WaffleSecurityConfiguration,\
-  ru.ospos.npf.commons.autoconfigure.security.WebSecurityConfigurationLdap
+  ru.ospos.npf.commons.autoconfigure.security.WebSecurityConfigurationLdap,\
+  ru.ospos.npf.commons.autoconfigure.security.LocalAuthenticationManagerConfiguration

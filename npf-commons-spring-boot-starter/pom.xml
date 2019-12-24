@@ -35,17 +35,11 @@
         </dependency>
 
         <dependency>
-            <groupId>com.oracle.ojdbc</groupId>
-            <artifactId>ojdbc8</artifactId>
-            <version>${oracle-ojdbc8-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.oracle.ojdbc</groupId>
-            <artifactId>orai18n</artifactId>
-            <version>${oracle-ojdbc8-version}</version>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
-
 
 </project>

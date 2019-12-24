@@ -91,7 +91,6 @@
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
-                <scope>test</scope>
                 <version>1.4.200</version>
             </dependency>
         </dependencies>
@@ -177,6 +176,34 @@
                     <url>http://barser.ru:8081/artifactory/ext-release-local</url>
                 </repository>
             </repositories>
+        </profile>
+
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.oracle.ojdbc</groupId>
+                    <artifactId>ojdbc8</artifactId>
+                    <version>${oracle-ojdbc8-version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.oracle.ojdbc</groupId>
+                    <artifactId>orai18n</artifactId>
+                    <version>${oracle-ojdbc8-version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>localconfig</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.h2database</groupId>
+                    <artifactId>h2</artifactId>
+                </dependency>
+            </dependencies>
         </profile>
 
     </profiles>
