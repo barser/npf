@@ -169,7 +169,7 @@ public class Pocard extends Document {
      * Направление платежа.
      */
     @Column(name = "MDIRECTION")
-    private int direction;
+    private Integer direction;
 
     /**
      * Код статьи движения денежных средств.

@@ -4,11 +4,13 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import ru.ospos.npf.commons.dao.document.PocardRepository;
 import ru.ospos.npf.commons.domain.document.Pocard;
 import ru.ospos.npf.commons.domain.document.QPocard;
 import ru.ospos.npf.commons.util.DataResult;
+import ru.ospos.npf.dto.PocardDto;
 import ru.ospos.npf.dto.Search;
 
 import javax.persistence.EntityManager;
@@ -36,7 +38,13 @@ public class SearchController {
         if (search.getDate() != null) builder.and(qPocard.date.eq(search.getDate()));
 
         if (search.getAmount() != null) builder.and(qPocard.amount.eq(search.getAmount()));
-        if (search.getContragent() != null) builder.and(qPocard.fromName.likeIgnoreCase(search.getContragent()));
+        if (!StringUtils.isEmpty(search.getContragent())) builder.and(qPocard.fromName.likeIgnoreCase(search.getContragent()));
+
+        builder.and(qPocard.date.isNotNull());
+        builder.and(qPocard.amount.isNotNull());
+        builder.and(qPocard.number.isNotNull());
+        builder.and(qPocard.fromName.isNotNull());
+        builder.and(qPocard.comments.isNotNull());
 
         var query = new JPAQuery<Pocard>(entityManager);
 
@@ -47,7 +55,7 @@ public class SearchController {
         query.limit(100);
 
         var pocards = query.fetch();
-        search.setFoundPocards(pocards);
+        search.setFoundPocards(PocardDto.from(pocards));
 
         search.setId(UUID.randomUUID());
         search.setState("Поиск завершен.");

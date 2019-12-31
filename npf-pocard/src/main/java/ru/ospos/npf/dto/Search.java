@@ -1,11 +1,10 @@
 package ru.ospos.npf.dto;
 
 import lombok.Data;
-import ru.ospos.npf.commons.domain.document.Pocard;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Collection;
 import java.util.UUID;
 
 @Data
@@ -19,5 +18,5 @@ public class Search {
     private LocalDate date;
     private String contragent;
 
-    private List<Pocard> foundPocards;
+    private Collection<PocardDto> foundPocards;
 }

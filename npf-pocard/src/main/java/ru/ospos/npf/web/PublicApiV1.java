@@ -40,7 +40,7 @@ public class PublicApiV1 {
      */
     @RequestMapping(value = "{pocardId}", method = RequestMethod.GET)
     public DataResult<PocardDto> getDetails(@PathVariable int pocardId) {
-        return DataResult.data(PocardDto.from(new Pocard()));
+        return DataResult.data(PocardDto.from(new Pocard(), "", "", 0, ""));
     }
 
     /**
