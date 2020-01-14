@@ -1,5 +1,9 @@
 package ru.ospos.npf.web;
 
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -12,7 +16,10 @@ public class CommonWebController {
     }
 
     @RequestMapping("/")
-    public String index() {
+    @Secured("ROLE_ADMIN")
+    public String index(Authentication authentication) {
+//        SecurityContext securityContext = SecurityContextHolder.getContext();
+//        securityContext.getAuthentication();
         return "index";
     }
 
