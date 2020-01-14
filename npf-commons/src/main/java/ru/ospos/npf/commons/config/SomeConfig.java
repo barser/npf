@@ -11,4 +11,6 @@ public class SomeConfig {
     public String check() {
         return url;
     }
+
+    // TODO file storage path here
 }

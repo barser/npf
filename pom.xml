@@ -50,6 +50,7 @@
         <module>npf-commons-spring-boot-autoconfigure</module>
         <module>npf-commons</module>
         <module>npf-commons-web</module>
+        <module>npf-sandbox</module>
     </modules>
 
     <dependencies>
@@ -149,7 +150,6 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 

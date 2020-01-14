@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
-public interface PocardRepository extends JpaRepository<Pocard, Long>, QuerydslPredicateExecutor<Pocard> {
+public interface PocardRepository extends JpaRepository<Pocard, Integer>, QuerydslPredicateExecutor<Pocard> {
 
     List<Pocard> findFirst3ByAmountGreaterThanEqual(BigDecimal amount);
 

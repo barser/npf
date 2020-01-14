@@ -1,4 +1,4 @@
-package ru.ospos.npf.web;
+package ru.ospos.npf.officeaddin;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -10,8 +10,8 @@ import ru.ospos.npf.commons.dao.document.PocardRepository;
 import ru.ospos.npf.commons.domain.document.Pocard;
 import ru.ospos.npf.commons.domain.document.QPocard;
 import ru.ospos.npf.commons.util.DataResult;
-import ru.ospos.npf.dto.PocardDto;
-import ru.ospos.npf.dto.Search;
+import ru.ospos.npf.officeaddin.dto.PocardDto;
+import ru.ospos.npf.officeaddin.dto.Search;
 
 import javax.persistence.EntityManager;
 import java.util.UUID;
@@ -23,21 +23,18 @@ public class SearchController {
     @Autowired
     private EntityManager entityManager;
 
-    @Autowired
-    private PocardRepository pocardRepository;
-
     @PostMapping
     @Transactional(readOnly = true)
-    public DataResult<Search> create(@RequestBody Search search) {
+    public DataResult<Search> post(@RequestBody Search search) {
 
         var qPocard = QPocard.pocard;
 
         BooleanBuilder builder = new BooleanBuilder();
 
-        if (search.getNumber() > 0) builder.and(qPocard.number.eq(search.getNumber()));
-        if (search.getDate() != null) builder.and(qPocard.date.eq(search.getDate()));
+        if (search.getParsedNumber() != null) builder.and(qPocard.number.eq(search.getParsedNumber()));
+        if (search.getParsedDate() != null) builder.and(qPocard.date.eq(search.getParsedDate()));
 
-        if (search.getAmount() != null) builder.and(qPocard.amount.eq(search.getAmount()));
+        if (search.getParsedAmount() != null) builder.and(qPocard.amount.eq(search.getParsedAmount()));
         if (!StringUtils.isEmpty(search.getContragent())) builder.and(qPocard.fromName.likeIgnoreCase(search.getContragent()));
 
         builder.and(qPocard.date.isNotNull());
@@ -55,6 +52,7 @@ public class SearchController {
         query.limit(100);
 
         var pocards = query.fetch();
+
         search.setFoundPocards(PocardDto.from(pocards));
 
         search.setId(UUID.randomUUID());
@@ -64,7 +62,7 @@ public class SearchController {
     }
 
     @GetMapping("{id}")
-    public DataResult<Search> read(@PathVariable String id) {
+    public DataResult<Search> get(@PathVariable String id) {
         Search search = new Search();
         search.setId(UUID.fromString(id));
         search.setState("Поиск завершен.");
