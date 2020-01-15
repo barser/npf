@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import ru.ospos.npf.commons.dao.document.PocardRepository;
 import ru.ospos.npf.commons.domain.document.Pocard;
 import ru.ospos.npf.commons.domain.document.QPocard;
 import ru.ospos.npf.commons.util.DataResult;
