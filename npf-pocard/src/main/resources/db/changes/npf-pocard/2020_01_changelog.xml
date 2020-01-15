@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="20200115" author="baranov">
+        <comment>Таблица с метаданными о документах MS Office, привязываемых к п/п.</comment>
+
+        <createTable tableName="pocard_office_attach_meta"
+                     remarks="Метаданные о документах MS Office, привязываемых к п/п (Баранов).">
+            <column name="id" type="raw(16)">
+                <constraints primaryKey="true" primaryKeyName="pocard_office_att_pk"
+                             nullable="false" notNullConstraintName="pocard_office_att_cc1"/>
+            </column>
+            <column name="version" type="number"/>
+            <column name="pocard_id" type="number" remarks="ID п/п">
+                <constraints foreignKeyName="POCARD_OFFICE_ATT_FK1" referencedTableName="POCARDS"/>
+            </column>
+            <column name="filestorage_id" type="number" remarks="ID зарегистрированной ссылки на файл в FILESTORAGE">
+                <constraints foreignKeyName="POCARD_OFFICE_ATT_FK2" referencedTableName="FILESTORAGES"/>
+            </column>
+            <column name="checksum" type="number" remarks="Контрольная сумма"/>
+            <column name="size_bytes" type="number" remarks="Размер файла"/>
+            <column name="origin_name" type="varchar2(255)" remarks="Имя файла при загрузке"/>
+            <column name="origin_path" type="varchar2(255)" remarks="Путь, по которому был загружен файл"/>
+            <column name="upload_ts" type="date" remarks="Дата и время загрузки файла"/>
+            <column name="state" type="varchar2(255)" remarks="Состояние (для отображения оператору MS OFFICE)"/>
+            <column name="processed" type="number(1)" remarks="Признак передачи файла на исполнение (для учета в MS OFFICE)"/>
+            <column name="mso_document_author" type="varchar2(255)" remarks="Автор документа (св-во MS OFFICE)"/>
+            <column name="mso_creation_date" type="varchar2(255)" remarks="Дата и время создания файла (св-во MS OFFICE)"/>
+        </createTable>
+
+        <createIndex tableName="pocard_office_attach_meta" indexName="pocard_office_att_idx1">
+            <column name="pocard_id"/>
+        </createIndex>
+
+        <createIndex tableName="pocard_office_attach_meta" indexName="pocard_office_att_idx2">
+            <column name="filestorage_id"/>
+        </createIndex>
+
+    </changeSet>
+
+</databaseChangeLog>

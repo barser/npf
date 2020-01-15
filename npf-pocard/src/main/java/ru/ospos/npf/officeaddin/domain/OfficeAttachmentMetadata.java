@@ -12,15 +12,15 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
- * Файл, передаваемый из надстройки Microsoft Office.
+ * Сведения о файле, передаваемом из надстройки Microsoft Office для привязки к платежному проучению.
  */
 @Getter
 @Setter
 @Entity
-@Table(name = "POCARD_OFFICE_ATTACH_META")
+@Table(name = "pocard_office_attach_meta")
 public class OfficeAttachmentMetadata implements Serializable {
 
-    private static final long serialVersionUID = -4527277548020979941L;
+    private static final long serialVersionUID = -4633662173860494284L;
 
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
@@ -31,17 +31,31 @@ public class OfficeAttachmentMetadata implements Serializable {
     private int version;
 
     @ManyToOne
-    @JoinColumn(name = "POCARD_ID", nullable = false)
+    @JoinColumn(name = "pocard_id", nullable = false)
     private Pocard pocard;
 
     @ManyToOne
-    @JoinColumn(name = "FILESTORAGE_ID", nullable = false)
+    @JoinColumn(name = "filestorage_id", nullable = false)
     private FileStorage fileStorage;
 
-    private Long checkSum;
+    private Long checksum;
+
+    @Column(name = "size_bytes")
     private Long size;
+
     private String originPath;
-    private LocalDateTime creationTs;
-    private String state; // TODO Enum
+
+    private String originName;
+
+    private String msoDocumentAuthor;
+
+    private String msoCreationDate;
+
+    private LocalDateTime uploadTs;
+
+    @Enumerated(EnumType.STRING)
+    private OfficeAttachmentState state;
+
     private Boolean processed;
+
 }

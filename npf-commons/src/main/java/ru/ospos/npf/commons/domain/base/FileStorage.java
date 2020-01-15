@@ -2,10 +2,13 @@ package ru.ospos.npf.commons.domain.base;
 
 import lombok.Getter;
 import lombok.Setter;
+import ru.ospos.npf.commons.domain.document.RegistrationCardFile;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -17,7 +20,7 @@ import java.util.Objects;
 @Table(name = "FILESTORAGES")
 public class FileStorage implements Serializable {
 
-    private static final long serialVersionUID = 5417658353954067231L;
+    private static final long serialVersionUID = -8456763444480361146L;
 
     @Id
     @SequenceGenerator(name = "g_file_storage", sequenceName = "FILE_SEQ", schema = "CDM", allocationSize = 1)
@@ -63,4 +66,7 @@ public class FileStorage implements Serializable {
      */
     @Column(name = "CREATION_DATE")
     private LocalDateTime creationTs;
+
+    @OneToMany(mappedBy = "fileStorage", cascade = CascadeType.ALL, orphanRemoval = true) // TODO уточнить
+    private List<RegistrationCardFile> registrationCards = new ArrayList<>();
 }

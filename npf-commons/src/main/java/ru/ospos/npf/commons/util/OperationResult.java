@@ -46,6 +46,14 @@ public class OperationResult {
     }
 
     public static OperationResult error(int code, String message, String details) {
+        return error(code, message, details, null);
+    }
+
+    public static OperationResult haltedByException(String message, Throwable e) {
+        return error(CODE_ERROR_DEFAULT, message, "", e);
+    }
+
+    public static OperationResult error(int code, String message, String details, Throwable e) {
 
         if (code == CODE_SUCCESS) {
             throw new GenericNpfException("Invalid code for error!");
@@ -56,7 +64,12 @@ public class OperationResult {
         operationResult.message = message;
         operationResult.details = details;
 
-        LOGGER.info("ERROR: {}", operationResult);
+        if (e == null) {
+            LOGGER.info("ERROR: {}", operationResult);
+        } else {
+            LOGGER.error("ERROR: " + operationResult.getMessage(), e);
+        }
+
         return operationResult;
     }
 

@@ -42,6 +42,10 @@
             <artifactId>sencha-extjs-runtime</artifactId>
             <version>6.2.0</version>
         </dependency>
+        <dependency>
+            <groupId>ru.ospos</groupId>
+            <artifactId>npf-commons</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

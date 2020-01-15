@@ -13,4 +13,6 @@ public class FileOperation {
     private String filename;
     private Integer pocardId;
     private String subpath;
+    private String author;
+    private String creationDate;
 }
