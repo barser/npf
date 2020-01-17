@@ -5,10 +5,12 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.ospos.npf.commons.domain.base.FileStorage;
 import ru.ospos.npf.commons.domain.document.Pocard;
+import ru.ospos.npf.commons.domain.document.RegistrationCard;
 import ru.ospos.npf.commons.util.GenericNpfException;
 import ru.ospos.npf.officeaddin.domain.OfficeAttachmentMetadata;
 
@@ -28,6 +30,9 @@ public class OfficeAddinServiceImpl implements OfficeAddinService {
     @Autowired
     private EntityManager entityManager;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     @Override
     public void bind(OfficeAttachmentMetadata officeAttachmentMetadata, Pocard pocard, File uploadedFile) {
 
@@ -38,7 +43,7 @@ public class OfficeAddinServiceImpl implements OfficeAddinService {
         var extension = FilenameUtils.getExtension(uploadedFile.getName());
 
         fileStorage.setCreationTs(officeAttachmentMetadata.getUploadTs());
-        fileStorage.setExtension(extension);
+        fileStorage.setExtension("." + extension);
         fileStorage.setOldFileName(uploadedFile.getAbsolutePath());
         fileStorage.setPath(uploadedFile.getAbsolutePath());
         entityManager.persist(fileStorage);
@@ -55,16 +60,11 @@ public class OfficeAddinServiceImpl implements OfficeAddinService {
         }
 
         fileStorage.setPath(newFile.getAbsolutePath().replace(FS_PREFIX, ""));
-
-        pocard.
-
-
-//        FileUtils.copyFile();
-//        new FileStorage();
-
-        // update oam fields FileStorage and Pocard
-
-
+        RegistrationCard registrationCard = pocard.getRegistrationCard();
+        if (registrationCard == null) {
+            throw new GenericNpfException("У выбранного платежного поручения отсутствует регистрационная карта");
+        }
+        registrationCard.addFile(fileStorage);
     }
 
     private File tryCreateNewFile(String extension, Integer fileStorageId) {
@@ -72,7 +72,7 @@ public class OfficeAddinServiceImpl implements OfficeAddinService {
         StringBuilder sb = new StringBuilder(FS_PREFIX);
 
         sb.append("pocard_office_addins\\");
-        sb.append(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy_mm")));
+        sb.append(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy_MM")));
         sb.append("\\fs_");
 
         File newFile;
@@ -88,7 +88,7 @@ public class OfficeAddinServiceImpl implements OfficeAddinService {
             }
 
             ssb.append(".");
-            ssb.append(FilenameUtils.getExtension(extension));
+            ssb.append(extension);
 
             newFile = new File(ssb.toString());
             counter++;

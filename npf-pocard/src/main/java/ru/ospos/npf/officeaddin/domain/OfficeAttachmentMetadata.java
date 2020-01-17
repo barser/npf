@@ -38,24 +38,32 @@ public class OfficeAttachmentMetadata implements Serializable {
     @JoinColumn(name = "filestorage_id", nullable = false)
     private FileStorage fileStorage;
 
+    @Column(name = "checksum")
     private Long checksum;
 
     @Column(name = "size_bytes")
     private Long size;
 
+    @Column(name = "origin_path")
     private String originPath;
 
+    @Column(name = "origin_name")
     private String originName;
 
+    @Column(name = "mso_document_author")
     private String msoDocumentAuthor;
 
+    @Column(name = "mso_creation_date")
     private String msoCreationDate;
 
+    @Column(name = "upload_ts")
     private LocalDateTime uploadTs;
 
+    @Column(name = "state")
     @Enumerated(EnumType.STRING)
     private OfficeAttachmentState state;
 
+    @Column(name = "processed")
     private Boolean processed;
 
 }

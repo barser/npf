@@ -16,7 +16,7 @@ import java.util.Objects;
  */
 @Getter
 @Setter
-@Entity
+@Entity(name = "FileStorage")
 @Table(name = "FILESTORAGES")
 public class FileStorage implements Serializable {
 
@@ -66,7 +66,4 @@ public class FileStorage implements Serializable {
      */
     @Column(name = "CREATION_DATE")
     private LocalDateTime creationTs;
-
-    @OneToMany(mappedBy = "fileStorage", cascade = CascadeType.ALL, orphanRemoval = true) // TODO уточнить
-    private List<RegistrationCardFile> registrationCards = new ArrayList<>();
 }

@@ -1,25 +1,30 @@
 package ru.ospos.npf.commons.domain.document;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
 
+@Getter
+@Setter
 @Embeddable
 public class RegistrationCardFileId implements Serializable {
 
-    private static final long serialVersionUID = -9007071586294146059L;
+    private static final long serialVersionUID = 3058234834751235530L;
 
     @Column(name = "fk_registration_card")
-    private Long registrationCardId;
+    private Integer registrationCardId;
 
     @Column(name = "fk_file")
-    private Long filestorageId;
+    private Integer filestorageId;
 
     protected RegistrationCardFileId() {
     }
 
-    public RegistrationCardFileId(Long registrationCardId, Long filestorageId) {
+    public RegistrationCardFileId(Integer registrationCardId, Integer filestorageId) {
         this.registrationCardId = registrationCardId;
         this.filestorageId = filestorageId;
     }

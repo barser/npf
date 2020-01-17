@@ -11,7 +11,7 @@ import java.util.Objects;
 
 @Getter
 @Setter
-@Entity
+@Entity(name = "RegistrationCardFile")
 @Table(name = "registration_card_files")
 public class RegistrationCardFile implements Serializable {
 
@@ -19,11 +19,13 @@ public class RegistrationCardFile implements Serializable {
     private RegistrationCardFileId id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("fk_registration_card")
+    @MapsId("registrationCardId")
+    @JoinColumn(name = "fk_registration_card")
     private RegistrationCard registrationCard;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("fk_file")
+    @MapsId("filestorageId")
+    @JoinColumn(name = "fk_file")
     private FileStorage fileStorage;
 
     protected RegistrationCardFile() {}
@@ -31,6 +33,7 @@ public class RegistrationCardFile implements Serializable {
     public RegistrationCardFile(RegistrationCard registrationCard, FileStorage fileStorage) {
         this.registrationCard = registrationCard;
         this.fileStorage = fileStorage;
+        this.id = new RegistrationCardFileId(registrationCard.getId(), fileStorage.getId());
     }
 
     @Override
