@@ -2,6 +2,7 @@ package ru.ospos.npf.officeaddin.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.io.FileUtils;
 import org.hibernate.annotations.GenericGenerator;
 import ru.ospos.npf.commons.domain.base.FileStorage;
 import ru.ospos.npf.commons.domain.document.Pocard;
@@ -66,4 +67,7 @@ public class OfficeAttachmentMetadata implements Serializable {
     @Column(name = "processed")
     private Boolean processed;
 
+    public String getDetails() {
+        return String.format("%s (%s)", originName, FileUtils.byteCountToDisplaySize(size));
+    }
 }

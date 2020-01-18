@@ -9,11 +9,17 @@ import org.springframework.web.bind.annotation.*;
 import ru.ospos.npf.commons.domain.document.Pocard;
 import ru.ospos.npf.commons.domain.document.QPocard;
 import ru.ospos.npf.commons.util.DataResult;
+import ru.ospos.npf.officeaddin.domain.OfficeAttachmentMetadata;
 import ru.ospos.npf.officeaddin.dto.PocardDto;
 import ru.ospos.npf.officeaddin.dto.Search;
+import ru.ospos.npf.officeaddin.repository.OfficeAttachmentMetadataRepository;
 
 import javax.persistence.EntityManager;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/pub/api/v1_0/search")
@@ -21,6 +27,9 @@ public class SearchController {
 
     @Autowired
     private EntityManager entityManager;
+
+    @Autowired
+    private OfficeAttachmentMetadataRepository officeAttachmentMetadataRepository;
 
     @PostMapping
     @Transactional(readOnly = true)
@@ -48,11 +57,16 @@ public class SearchController {
         query.where(builder);
 
         query.orderBy(qPocard.id.desc());
-        query.limit(100);
+        query.limit(25);
 
         var pocards = query.fetch();
 
-        search.setFoundPocards(PocardDto.from(pocards));
+        Map<Pocard, List<OfficeAttachmentMetadata>> meta =
+                officeAttachmentMetadataRepository.findByPocardIn(pocards)
+                    .stream()
+                    .collect(Collectors.groupingBy(OfficeAttachmentMetadata::getPocard));
+
+        search.setFoundPocards(PocardDto.from(pocards, meta));
 
         search.setId(UUID.randomUUID());
         search.setState("Поиск завершен.");

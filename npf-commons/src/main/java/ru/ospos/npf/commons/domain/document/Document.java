@@ -5,6 +5,7 @@ import lombok.Setter;
 import ru.ospos.npf.commons.domain.base.Action;
 import ru.ospos.npf.commons.domain.base.FileStorage;
 import ru.ospos.npf.commons.domain.base.TreeNode;
+import ru.ospos.npf.commons.domain.document.regcard.RegistrationCard;
 import ru.ospos.npf.commons.domain.user.Operator;
 
 import javax.persistence.*;

@@ -5,11 +5,11 @@ import lombok.Getter;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 import ru.ospos.npf.commons.domain.document.Pocard;
+import ru.ospos.npf.officeaddin.domain.OfficeAttachmentMetadata;
 
 import java.text.DecimalFormat;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter
@@ -86,16 +86,29 @@ public class PocardDto {
      */
     private String documentFolder;
 
-    public static Collection<PocardDto> from(Collection<Pocard> pocards) {
+    public static Collection<PocardDto> from(Collection<Pocard> pocards, Map<Pocard, List<OfficeAttachmentMetadata>> meta) {
 
-        Collection<String> col = Arrays.asList("kasim1.xls, 25.11.2019, 34156KB", "kasim2.xls, 25.12.2019, 34KB");
+        List<PocardDto> result = new ArrayList<>(pocards.size());
 
-        return pocards.stream().map(pocard -> PocardDto
-                .from(pocard, col,"В работе (рассмотрение)", 100, "Глухова Е.Ю."))
-                .collect(Collectors.toUnmodifiableList());
+        for (Pocard pocard :
+                pocards) {
+
+            List<OfficeAttachmentMetadata> attaches = new ArrayList<>();
+            for (Pocard p2 :
+                    meta.keySet()) {
+
+                if (p2.getId().equals(pocard.getId())) {
+                    attaches = meta.get(p2);
+                    break;
+                }
+            }
+
+            result.add(PocardDto.from(pocard, attaches));
+        }
+        return result;
     }
 
-    public static PocardDto from(Pocard pocard, Collection<String> linkedFiles, String state, int stateCode, String executor) {
+    public static PocardDto from(Pocard pocard, Collection<OfficeAttachmentMetadata> attaches) {
         var dto = new PocardDto();
 
         dto.pocardId = pocard.getId();
@@ -105,19 +118,19 @@ public class PocardDto {
         dto.amount = StringUtils.leftPad(AMOUNT_FORMATTER.get().format(pocard.getAmount()), 17);
 
         dto.comments = StringUtils.abbreviate(pocard.getComments(), 75);
-        dto.contragent = StringUtils.abbreviate("Контрагент контрагент контрагент 12345", 32);//pocard.getContragent();
+        dto.contragent = StringUtils.abbreviate(pocard.getContragent(), 32);
 
-        if (linkedFiles != null) {
+        dto.linkedFilesCount = attaches.size();
+        if (attaches.size() > 0) {
+            // TODO!
             dto.linkedFiles = "TODO";
-            dto.linkedFilesCount = linkedFiles.size();
+            dto.state = "TODO - state of first(any) attach - Передано на обработку/Готово";
+            //dto.stateCode = stateCode;
         } else {
             dto.linkedFiles = "";
-            dto.linkedFilesCount = 0;
+            dto.state = "Новое";
         }
-
-        dto.state = state;
-        dto.stateCode = stateCode;
-        dto.executor = executor;
+        dto.executor = "TODO: исполнитель"; // pocard->actions->holder
 
         return dto;
     }

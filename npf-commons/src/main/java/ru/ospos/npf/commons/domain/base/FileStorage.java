@@ -2,13 +2,10 @@ package ru.ospos.npf.commons.domain.base;
 
 import lombok.Getter;
 import lombok.Setter;
-import ru.ospos.npf.commons.domain.document.RegistrationCardFile;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**

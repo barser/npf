@@ -1,4 +1,4 @@
-package ru.ospos.npf.commons.domain.document;
+package ru.ospos.npf.commons.domain.document.regcard;
 
 import lombok.Getter;
 import lombok.Setter;
