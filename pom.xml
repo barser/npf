@@ -79,12 +79,12 @@
             <dependency>
                 <groupId>ru.ospos</groupId>
                 <artifactId>npf-commons</artifactId>
-                <version>${version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>ru.ospos</groupId>
                 <artifactId>npf-commons-spring-boot-starter</artifactId>
-                <version>${version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.projectlombok</groupId>

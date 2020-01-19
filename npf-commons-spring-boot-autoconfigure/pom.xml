@@ -17,14 +17,14 @@
         <dependency>
             <groupId>ru.ospos</groupId>
             <artifactId>npf-commons</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.parent.version}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>ru.ospos</groupId>
             <artifactId>npf-commons-web</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <dependency>
