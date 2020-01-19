@@ -86,6 +86,14 @@ public class PocardDto {
      */
     private String documentFolder;
 
+    /**
+     * Создание dto из экземпляров Pocard, а также дополнительных данных о привязанных к ним офисных документов.
+     * Внутри вызывается {@link PocardDto#from(Pocard, boolean, Collection)}.
+     *
+     * @param pocards платежные поручения, экземпляры Pocard
+     * @param meta дополнительные данные о привязанных платежных поручениях. Ключ - идентификатор (id) платежного поручения.
+     * @return Коллекция dto для передачи клиенту
+     */
     public static Collection<PocardDto> from(Collection<Pocard> pocards, Map<Integer, List<OfficeAttachmentMetadata>> meta) {
 
         List<PocardDto> result = new ArrayList<>(pocards.size());
@@ -107,6 +115,14 @@ public class PocardDto {
         return result;
     }
 
+    /**
+     * Создание dto из экземпляра Pocard и привязанных к нему офисных документов (если есть).
+     *
+     * @param pocard платежное поручение, экземпляр Pocard.
+     * @param detailed признак того, что dto должен содержать подробную детализированную информацию.
+     * @param attaches коллекция офисных документов, которые привязаны к платежному поручению
+     * @return dto для передачи клиенту.
+     */
     public static PocardDto from(Pocard pocard, boolean detailed, Collection<OfficeAttachmentMetadata> attaches) {
         var dto = new PocardDto();
 
