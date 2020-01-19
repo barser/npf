@@ -2,11 +2,10 @@ package ru.ospos.npf.commons.domain.base;
 
 import lombok.Getter;
 import lombok.Setter;
-import ru.ospos.npf.commons.domain.document.Document;
+import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -32,6 +31,7 @@ public class TreeNode implements Serializable {
      * Название узла дерева.
      */
     @Column(name = "TITLE")
+    @NaturalId
     private String title;
 
     /**
@@ -39,6 +39,7 @@ public class TreeNode implements Serializable {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PARENT_ID")
+    @NaturalId
     private TreeNode parent;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -74,11 +75,11 @@ public class TreeNode implements Serializable {
         if (this == o) return true;
         if (!(o instanceof TreeNode)) return false;
         TreeNode treeNode = (TreeNode) o;
-        return Objects.equals(id, treeNode.id);
+        return id != null && id.equals(treeNode.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return 31; // Vlad Mihalcea's suggestion
     }
 }

@@ -4,8 +4,13 @@ import ru.ospos.npf.commons.domain.document.Pocard;
 import ru.ospos.npf.officeaddin.domain.OfficeAttachmentMetadata;
 
 import java.io.File;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
 
 public interface OfficeAddinService {
+
+    List<Pocard> search(Long number, LocalDate date, BigDecimal amount, String contragent );
 
     /**
      * Зарегистрировать загруженный документ в БД и связать его с п/п.

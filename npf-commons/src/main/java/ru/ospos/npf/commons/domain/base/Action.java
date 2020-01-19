@@ -56,4 +56,17 @@ public class Action implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FK_OPERATOR")
     private Operator operator;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Action)) return false;
+        Action action = (Action) o;
+        return id != null && id.equals(action.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return 31; // Vlad Mihalcea's suggestion
+    }
 }

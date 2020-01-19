@@ -1,5 +1,7 @@
 package ru.ospos.npf.officeaddin.service;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.jpa.impl.JPAQuery;
 import liquibase.util.file.FilenameUtils;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -7,9 +9,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import ru.ospos.npf.commons.domain.base.Action;
+import ru.ospos.npf.commons.domain.base.ActionType;
 import ru.ospos.npf.commons.domain.base.FileStorage;
+import ru.ospos.npf.commons.domain.base.TreeNode;
 import ru.ospos.npf.commons.domain.document.Pocard;
+import ru.ospos.npf.commons.domain.document.QPocard;
 import ru.ospos.npf.commons.domain.document.regcard.RegistrationCard;
+import ru.ospos.npf.commons.domain.user.Operator;
 import ru.ospos.npf.commons.util.GenericNpfException;
 import ru.ospos.npf.officeaddin.domain.OfficeAttachmentMetadata;
 import ru.ospos.npf.officeaddin.domain.OfficeAttachmentState;
@@ -18,7 +26,9 @@ import ru.ospos.npf.officeaddin.repository.OfficeAttachmentMetadataRepository;
 import javax.persistence.EntityManager;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,6 +46,37 @@ public class OfficeAddinServiceImpl implements OfficeAddinService {
 
     @Autowired
     private OfficeAttachmentMetadataRepository officeAttachmentMetadataRepository;
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Pocard> search(Long number, LocalDate date, BigDecimal amount, String contragent) {
+
+        var qPocard = QPocard.pocard;
+
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if (number != null) builder.and(qPocard.number.eq(number));
+        if (date != null) builder.and(qPocard.date.eq(date));
+
+        if (amount != null) builder.and(qPocard.amount.eq(amount));
+        if (!StringUtils.isEmpty(contragent)) builder.and(qPocard.fromName.likeIgnoreCase(contragent));
+
+        builder.and(qPocard.date.isNotNull());
+        builder.and(qPocard.amount.isNotNull());
+        builder.and(qPocard.number.isNotNull());
+        builder.and(qPocard.fromName.isNotNull());
+        builder.and(qPocard.comments.isNotNull());
+
+        var query = new JPAQuery<Pocard>(entityManager);
+
+        query.from(qPocard);
+        query.where(builder);
+
+        query.orderBy(qPocard.id.desc());
+        query.limit(25);
+
+        return query.fetch();
+    }
 
     @Override
     public void bind(OfficeAttachmentMetadata officeAttachmentMetadata, Pocard pocard, File uploadedFile) {
@@ -146,6 +187,15 @@ public class OfficeAddinServiceImpl implements OfficeAddinService {
         }
 
         // TODO: передача платежки на исполнение - статус ON_HOLD, назначение исполнителя, перемещение в папку и т.д.
-        // pocard...
+        var hold = new Action();
+        hold.setCommentary("Установлено из надстройки в Excel.");
+        hold.setCreationTs(LocalDateTime.now());
+        hold.setDate(hold.getCreationTs());
+        hold.setType(entityManager.getReference(ActionType.class, 0 /*TODO: код действия на исп. - взято на исполнение*/));
+        hold.setOperator(entityManager.getReference(Operator.class, 0L /*TODO: код оператора Степанова Ю.*/));
+
+//          Это уже есть - при регистрации:
+//        entityManager.getReference(TreeNode.class, 0L /*TODO id папки Физические лица*/);
+//        pocard.addTreeNode();
     }
 }

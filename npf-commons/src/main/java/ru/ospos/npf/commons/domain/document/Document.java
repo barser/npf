@@ -101,6 +101,9 @@ public class Document implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FK_PRINTED")
     private Action printed;
+    private void setPrinted(Action action) {
+        // Сделано намеренно. Для добавления действий определенного типа используйте addAction(Action action).
+    };
 
     /**
      * Действие "документ подписан".
@@ -108,6 +111,9 @@ public class Document implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FK_SIGNED")
     private Action signed;
+    private void setSigned(Action action) {
+        // Сделано намеренно. Для добавления действий определенного типа используйте addAction(Action action).
+    };
 
 
     /**
@@ -117,6 +123,9 @@ public class Document implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FK_DELETED")
     private Action deleted;
+    private void setDeleted(Action action) {
+        // Сделано намеренно. Для добавления действий определенного типа используйте addAction(Action action).
+    };
 
     /**
      * Действие "документ взят на исполнение".
@@ -125,6 +134,9 @@ public class Document implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FK_HOLD")
     private Action hold;
+    private void setHold(Action action) {
+        // Сделано намеренно. Для добавления действий определенного типа используйте addAction(Action action).
+    };
 
     /**
      * Дейсвтие "документ исполнен".
@@ -133,6 +145,9 @@ public class Document implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FK_DONE")
     private Action done;
+    private void setDone(Action action) {
+        // Сделано намеренно. Для добавления действий определенного типа используйте addAction(Action action).
+    };
 
     /**
      * Действие "документ отсканирован".
@@ -140,6 +155,9 @@ public class Document implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FK_SCAN")
     private Action scan;
+    private void setScan(Action action) {
+        // Сделано намеренно. Для добавления действий определенного типа используйте addAction(Action action).
+    };
 
     /**
      * Действие "штрих-код оригинала документа отсканирован".
@@ -252,11 +270,29 @@ public class Document implements Serializable {
     )
     private Set<TreeNode> treeNodes = new HashSet<>();
 
+    @ManyToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    })
+    @JoinTable(name = "DOCUMENT_ACTIONS",
+            joinColumns = @JoinColumn(name = "FK_DOCUMENT"),
+            inverseJoinColumns = @JoinColumn(name = "FK_ACTION")
+    )
+    private Set<Action> actions = new HashSet<>();
+
     public void addTreeNode(TreeNode treeNode) {
         treeNodes.add(treeNode);
     }
 
     public void removeTreeNode(TreeNode treeNode) {
         treeNodes.remove(treeNode);
+    }
+
+    public void addAction(Action action) {
+        actions.add(action);
+    }
+
+    public void removeAction(Action action) {
+        actions.remove(action);
     }
 }

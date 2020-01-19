@@ -13,6 +13,7 @@ import ru.ospos.npf.officeaddin.domain.OfficeAttachmentMetadata;
 import ru.ospos.npf.officeaddin.dto.PocardDto;
 import ru.ospos.npf.officeaddin.dto.Search;
 import ru.ospos.npf.officeaddin.repository.OfficeAttachmentMetadataRepository;
+import ru.ospos.npf.officeaddin.service.OfficeAddinService;
 
 import javax.persistence.EntityManager;
 import java.util.HashMap;
@@ -31,40 +32,24 @@ public class SearchController {
     @Autowired
     private OfficeAttachmentMetadataRepository officeAttachmentMetadataRepository;
 
+    @Autowired
+    private OfficeAddinService service;
+
     @PostMapping
     @Transactional(readOnly = true)
     public DataResult<Search> post(@RequestBody Search search) {
 
-        var qPocard = QPocard.pocard;
+        var pocards = service.search(
+                search.getParsedNumber(),
+                search.getParsedDate(),
+                search.getParsedAmount(),
+                search.getContragent()
+        );
 
-        BooleanBuilder builder = new BooleanBuilder();
-
-        if (search.getParsedNumber() != null) builder.and(qPocard.number.eq(search.getParsedNumber()));
-        if (search.getParsedDate() != null) builder.and(qPocard.date.eq(search.getParsedDate()));
-
-        if (search.getParsedAmount() != null) builder.and(qPocard.amount.eq(search.getParsedAmount()));
-        if (!StringUtils.isEmpty(search.getContragent())) builder.and(qPocard.fromName.likeIgnoreCase(search.getContragent()));
-
-        builder.and(qPocard.date.isNotNull());
-        builder.and(qPocard.amount.isNotNull());
-        builder.and(qPocard.number.isNotNull());
-        builder.and(qPocard.fromName.isNotNull());
-        builder.and(qPocard.comments.isNotNull());
-
-        var query = new JPAQuery<Pocard>(entityManager);
-
-        query.from(qPocard);
-        query.where(builder);
-
-        query.orderBy(qPocard.id.desc());
-        query.limit(25);
-
-        var pocards = query.fetch();
-
-        Map<Pocard, List<OfficeAttachmentMetadata>> meta =
+        Map<Integer, List<OfficeAttachmentMetadata>> meta =
                 officeAttachmentMetadataRepository.findByPocardIn(pocards)
                     .stream()
-                    .collect(Collectors.groupingBy(OfficeAttachmentMetadata::getPocard));
+                    .collect(Collectors.groupingBy(oam -> oam.getPocard().getId()));
 
         search.setFoundPocards(PocardDto.from(pocards, meta));
 

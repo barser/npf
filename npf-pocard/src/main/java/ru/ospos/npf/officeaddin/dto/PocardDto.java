@@ -86,80 +86,85 @@ public class PocardDto {
      */
     private String documentFolder;
 
-    public static Collection<PocardDto> from(Collection<Pocard> pocards, Map<Pocard, List<OfficeAttachmentMetadata>> meta) {
+    public static Collection<PocardDto> from(Collection<Pocard> pocards, Map<Integer, List<OfficeAttachmentMetadata>> meta) {
 
         List<PocardDto> result = new ArrayList<>(pocards.size());
 
         for (Pocard pocard :
                 pocards) {
 
-            List<OfficeAttachmentMetadata> attaches = new ArrayList<>();
-            for (Pocard p2 :
+            List<OfficeAttachmentMetadata> pocardAttaches = new ArrayList<>();
+            for (Integer pId :
                     meta.keySet()) {
 
-                if (p2.getId().equals(pocard.getId())) {
-                    attaches = meta.get(p2);
+                if (pId != null && pId.equals(pocard.getId())) {
+                    pocardAttaches = meta.get(pId);
                     break;
                 }
             }
-
-            result.add(PocardDto.from(pocard, attaches));
+            result.add(PocardDto.from(pocard, false, pocardAttaches));
         }
         return result;
     }
 
-    public static PocardDto from(Pocard pocard, Collection<OfficeAttachmentMetadata> attaches) {
+    public static PocardDto from(Pocard pocard, boolean detailed, Collection<OfficeAttachmentMetadata> attaches) {
         var dto = new PocardDto();
 
         dto.pocardId = pocard.getId();
         dto.number = pocard.getNumber();
         dto.date = pocard.getDate();
 
-        dto.amount = StringUtils.leftPad(AMOUNT_FORMATTER.get().format(pocard.getAmount()), 17);
+        if (detailed) {
+            dto.amount = AMOUNT_FORMATTER.get().format(pocard.getAmount());
+            dto.comments = pocard.getComments();
+            dto.contragent = pocard.getContragent();
+            dto.contragentAccount = pocard.getFromAccount();
+            dto.contragentInn = pocard.getFromInn();
+            dto.stateCode = pocard.getStatus();
 
-        dto.comments = StringUtils.abbreviate(pocard.getComments(), 75);
-        dto.contragent = StringUtils.abbreviate(pocard.getContragent(), 32);
+            if (pocard.getTreeNodes().size() > 0) {
+                // Первую папку выводим в подробностях.
+                // TODO - а быть может выводить все папки, в которых находится документ?
+                dto.documentFolder = pocard.getTreeNodes()
+                        .iterator().next()
+                        .getTitle();
+            }
+
+        } else {
+            dto.amount = StringUtils.leftPad(AMOUNT_FORMATTER.get().format(pocard.getAmount()), 17);
+            dto.comments = StringUtils.abbreviate(pocard.getComments(), 75);
+            dto.contragent = StringUtils.abbreviate(pocard.getContragent(), 32);
+        }
 
         dto.linkedFilesCount = attaches.size();
-        if (attaches.size() > 0) {
-            // TODO!
-            dto.linkedFiles = "TODO";
-            dto.state = "TODO - state of first(any) attach - Передано на обработку/Готово";
-            //dto.stateCode = stateCode;
-        } else {
-            dto.linkedFiles = "";
-            dto.state = "Новое";
-        }
-        dto.executor = "TODO: исполнитель"; // pocard->actions->holder
+        dto.linkedFiles = "";
+        dto.state = "Новое";
 
-        return dto;
-    }
+        for (OfficeAttachmentMetadata oam : attaches) {
 
-    public static PocardDto fromDetailed(Pocard pocard, Collection<String> linkedFiles, String state, int stateCode, String executor) {
-        var dto = new PocardDto();
+            if (detailed) {
+                //noinspection StringConcatenationInLoop
+                dto.linkedFiles += oam.getDetails();
+            }
 
-        dto.pocardId = pocard.getId();
-        dto.number = pocard.getNumber();
-        dto.date = pocard.getDate();
-
-        dto.amount = AMOUNT_FORMATTER.get().format(pocard.getAmount());
-
-        dto.comments = pocard.getComments();
-        dto.contragent = "Контрагент контрагент контрагент 12345";
-
-        if (linkedFiles != null) {
-            dto.linkedFiles = "TODO";
-            dto.linkedFilesCount = linkedFiles.size();
-        } else {
-            dto.linkedFiles = "";
-            dto.linkedFilesCount = 0;
+            switch (oam.getState()) {
+                case ON_EXECUTION:
+                    dto.state = "Передано на исп.";
+                    break;
+                case BINDED:
+                    dto.state = "Выполн. привязка";
+                    break;
+                case DONE:
+                default:
+                    dto.state = "Исполнено";
+            }
         }
 
-        dto.state = state;
-        dto.stateCode = stateCode;
-        dto.executor = executor;
-
+        if (pocard.getHold() != null && pocard.getHold().getOperator() != null) {
+            dto.executor = pocard.getHold().getOperator().getLogin();
+        } else {
+            dto.executor = "";
+        }
         return dto;
     }
-
 }
