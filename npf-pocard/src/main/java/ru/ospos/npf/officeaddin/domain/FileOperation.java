@@ -1,4 +1,4 @@
-package ru.ospos.npf.officeaddin.dto;
+package ru.ospos.npf.officeaddin.domain;
 
 import lombok.Data;
 

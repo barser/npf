@@ -124,19 +124,21 @@ public class PocardDto {
      * @return dto для передачи клиенту.
      */
     public static PocardDto from(Pocard pocard, boolean detailed, Collection<OfficeAttachmentMetadata> attaches) {
-        var dto = new PocardDto();
 
+        var dto = new PocardDto();
         dto.pocardId = pocard.getId();
         dto.number = pocard.getNumber();
         dto.date = pocard.getDate();
 
         if (detailed) {
             dto.amount = AMOUNT_FORMATTER.get().format(pocard.getAmount());
-            dto.comments = pocard.getComments();
-            dto.contragent = pocard.getContragent();
-            dto.contragentAccount = pocard.getFromAccount();
-            dto.contragentInn = pocard.getFromInn();
-            dto.stateCode = pocard.getStatus();
+            dto.comments = Objects.toString(pocard.getComments(), "");
+
+            dto.contragent = Objects.toString(pocard.getContragent(), "");
+            dto.contragentAccount = Objects.toString(pocard.getFromAccount(), "");
+
+            dto.contragentInn = Objects.toString(pocard.getFromInn(), "");
+            dto.stateCode = Optional.ofNullable(pocard.getStatus()).orElse(0);
 
             if (pocard.getTreeNodes().size() > 0) {
                 // Первую папку выводим в подробностях.
@@ -144,23 +146,28 @@ public class PocardDto {
                 dto.documentFolder = pocard.getTreeNodes()
                         .iterator().next()
                         .getTitle();
+            } else {
+                dto.documentFolder = "";
             }
 
         } else {
             dto.amount = StringUtils.leftPad(AMOUNT_FORMATTER.get().format(pocard.getAmount()), 17);
             dto.comments = StringUtils.abbreviate(pocard.getComments(), 75);
-            dto.contragent = StringUtils.abbreviate(pocard.getContragent(), 32);
+            dto.contragent = pocard.getContragent() == null ? "" : StringUtils.abbreviate(pocard.getContragent(), 32);
         }
+
+        if (attaches == null) attaches = new ArrayList<>();
 
         dto.linkedFilesCount = attaches.size();
         dto.linkedFiles = "";
         dto.state = "Новое";
 
+        StringBuilder linkedFilesString = new StringBuilder();
         for (OfficeAttachmentMetadata oam : attaches) {
 
             if (detailed) {
-                //noinspection StringConcatenationInLoop
-                dto.linkedFiles += oam.getDetails();
+                linkedFilesString.append(oam.getDetails());
+                linkedFilesString.append("; ");
             }
 
             switch (oam.getState()) {
@@ -175,6 +182,7 @@ public class PocardDto {
                     dto.state = "Исполнено";
             }
         }
+        dto.linkedFiles = linkedFilesString.toString();
 
         if (pocard.getHold() != null && pocard.getHold().getOperator() != null) {
             dto.executor = pocard.getHold().getOperator().getLogin();

@@ -14,7 +14,4 @@ public interface OfficeAttachmentMetadataRepository extends JpaRepository<Office
 
     List<OfficeAttachmentMetadata> findByPocardIn(Collection<Pocard> pocards);
 
-    List<OfficeAttachmentMetadata> findByChecksumAndSizeAndMsoDocumentAuthorAndOriginName(
-            Long checksum, Long size, String msoDocumentAuthor, String originName
-    );
 }

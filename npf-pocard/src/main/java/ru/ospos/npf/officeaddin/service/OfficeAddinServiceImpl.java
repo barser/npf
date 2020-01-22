@@ -13,12 +13,12 @@ import org.springframework.util.StringUtils;
 import ru.ospos.npf.commons.domain.base.Action;
 import ru.ospos.npf.commons.domain.base.ActionType;
 import ru.ospos.npf.commons.domain.base.FileStorage;
-import ru.ospos.npf.commons.domain.base.TreeNode;
 import ru.ospos.npf.commons.domain.document.Pocard;
 import ru.ospos.npf.commons.domain.document.QPocard;
 import ru.ospos.npf.commons.domain.document.regcard.RegistrationCard;
 import ru.ospos.npf.commons.domain.user.Operator;
 import ru.ospos.npf.commons.util.GenericNpfException;
+import ru.ospos.npf.officeaddin.domain.FileOperation;
 import ru.ospos.npf.officeaddin.domain.OfficeAttachmentMetadata;
 import ru.ospos.npf.officeaddin.domain.OfficeAttachmentState;
 import ru.ospos.npf.officeaddin.repository.OfficeAttachmentMetadataRepository;
@@ -46,6 +46,9 @@ public class OfficeAddinServiceImpl implements OfficeAddinService {
 
     @Autowired
     private OfficeAttachmentMetadataRepository officeAttachmentMetadataRepository;
+
+    @Autowired
+    private UploadedFileService uploadedFileService;
 
     @Override
     @Transactional(readOnly = true)
@@ -78,15 +81,39 @@ public class OfficeAddinServiceImpl implements OfficeAddinService {
         return query.fetch();
     }
 
+    private OfficeAttachmentMetadata createOfficeAttachmentMetadata(File file, FileOperation fileOperation) {
+
+        var oam = new OfficeAttachmentMetadata();
+
+        oam.setChecksum(uploadedFileService.getChecksum(file));
+        oam.setUploadTs(LocalDateTime.now());
+
+        oam.setSize(uploadedFileService.getSize(file));
+        oam.setOriginPath(fileOperation.getSubpath());
+
+        oam.setOriginName(file.getName());
+        oam.setMsoDocumentAuthor(fileOperation.getAuthor());
+
+        oam.setMsoCreationDate(fileOperation.getCreationDate());
+        oam.setProcessed(false);
+
+        entityManager.persist(oam);
+        return oam;
+    }
+
     @Override
-    public void bind(OfficeAttachmentMetadata officeAttachmentMetadata, Pocard pocard, File uploadedFile) {
+    public void bind(Pocard pocard, File uploadedFile, FileOperation fileOperation) {
 
-        if (officeAttachmentMetadata.getProcessed() || officeAttachmentMetadata.getPocard() != null) {
-            throw new GenericNpfException("Не удается прикрепить документ к п/п: " +
-                    "документ уже прикреплен к другому п/п.");
+        var officeAttachmentMetadata = createOfficeAttachmentMetadata(uploadedFile, fileOperation);
+
+        var oam = officeAttachmentMetadataRepository.findByPocardIn(Collections.singleton(pocard));
+        var invalidAttachmentStates = Arrays.asList(OfficeAttachmentState.DONE, OfficeAttachmentState.ON_EXECUTION);
+        for (var doc :
+                oam) {
+            if (invalidAttachmentStates.contains(doc.getState())) {
+                throw new GenericNpfException("Не удается прикрепить документ: п/п уже передано на исполнение.");
+            }
         }
-
-        if (!entityManager.contains(officeAttachmentMetadata)) entityManager.persist(officeAttachmentMetadata);
 
         // Загруженный файл копируется из временной папки в общее файловое хранилище.
         var fileStorage = new FileStorage();
@@ -112,19 +139,23 @@ public class OfficeAddinServiceImpl implements OfficeAddinService {
         // Выполняется привязка файла к регистрационной карте платежного поручения.
         // Если у платежного поручения нет регистрационной карты происходит ошибка.
         fileStorage.setPath(newFile.getAbsolutePath().replace(FS_PREFIX, ""));
+
         RegistrationCard registrationCard = pocard.getRegistrationCard();
         if (registrationCard == null) {
             throw new GenericNpfException("У выбранного платежного поручения отсутствует регистрационная карта");
         }
         registrationCard.addFile(fileStorage);
+
         officeAttachmentMetadata.setState(OfficeAttachmentState.BINDED);
+        officeAttachmentMetadata.setPocard(pocard);
+        officeAttachmentMetadata.setFileStorage(fileStorage);
     }
 
     private File tryCreateNewFile(String extension, Integer fileStorageId) {
 
         StringBuilder sb = new StringBuilder(FS_PREFIX);
 
-        sb.append("pocard_office_addins\\");
+        sb.append("pocard_office_addins\\"); // Подпапка, в которой хранятся все файлы, прикрепляемые этим сервисом.
         sb.append(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy_MM")));
         sb.append("\\fs_");
 
@@ -156,46 +187,41 @@ public class OfficeAddinServiceImpl implements OfficeAddinService {
     }
 
     @Override
-    public void process(OfficeAttachmentMetadata officeAttachmentMetadata) {
+    public void process(Pocard pocard) {
 
-        if (officeAttachmentMetadata.getProcessed() ||
-                Arrays.asList(OfficeAttachmentState.DONE, OfficeAttachmentState.ON_EXECUTION)
-                        .contains(officeAttachmentMetadata.getState())) {
-            throw new GenericNpfException("Документ был передан на исполнение ранее!");
-        }
+        List<OfficeAttachmentMetadata> oam = officeAttachmentMetadataRepository
+                .findByPocardIn(Collections.singletonList(pocard));
 
-
-        // Определение связанной платежки по привязанному к ней документу
-        Pocard pocard = officeAttachmentMetadata.getPocard();
-        if (pocard == null) {
-            throw new GenericNpfException("Передать документ на исполнение невозможно, " +
-                    "поскольку он еще не привязан к платежному поручению!");
-        }
-
-        // Передача на исполнение всех документов, привязанных к одной платежке
-        List<OfficeAttachmentMetadata> docs = officeAttachmentMetadataRepository
-                .findByPocardIn(Collections.singleton(pocard));
-
-        for (OfficeAttachmentMetadata doc :
-                docs) {
-            if (doc.getProcessed() || Arrays.asList(OfficeAttachmentState.DONE, OfficeAttachmentState.ON_EXECUTION).contains(doc.getState())) {
+        for (OfficeAttachmentMetadata officeAttachmentMetadata :
+                oam) {
+            if (officeAttachmentMetadata.getProcessed() == null
+                    || Boolean.TRUE.equals(officeAttachmentMetadata.getProcessed())
+                    || Arrays.asList(OfficeAttachmentState.DONE, OfficeAttachmentState.ON_EXECUTION)
+                    .contains(officeAttachmentMetadata.getState())) {
                 throw new GenericNpfException("Ошибка сервера: один из привязанных ранее к платежному поручению " +
                         "находится в некорректном состоянии! Пожалуйста, обратитесь в тех.поддержку.");
             }
-            doc.setState(OfficeAttachmentState.ON_EXECUTION);
-            doc.setProcessed(true);
+            officeAttachmentMetadata.setState(OfficeAttachmentState.ON_EXECUTION);
+            officeAttachmentMetadata.setProcessed(true);
         }
 
-        // TODO: передача платежки на исполнение - статус ON_HOLD, назначение исполнителя, перемещение в папку и т.д.
         var hold = new Action();
-        hold.setCommentary("Установлено из надстройки в Excel.");
+        hold.setCommentary("Установлено из надстройки Excel.");
         hold.setCreationTs(LocalDateTime.now());
         hold.setDate(hold.getCreationTs());
-        hold.setType(entityManager.getReference(ActionType.class, 0 /*TODO: код действия на исп. - взято на исполнение*/));
-        hold.setOperator(entityManager.getReference(Operator.class, 0L /*TODO: код оператора Степанова Ю.*/));
 
-//          Это уже есть - при регистрации:
-//        entityManager.getReference(TreeNode.class, 0L /*TODO id папки Физические лица*/);
-//        pocard.addTreeNode();
+        var prevHold = pocard.getHold();
+
+        // ActionType: 10 - DocumentHold, 12 - DocumentCoHold
+        hold.setType(entityManager.getReference(ActionType.class, prevHold == null ? 10 : 12));
+
+        // Employees: 172 - Баранов, 140 - Степанова TODO: в настройки
+        var executor = entityManager.getReference(Operator.class, 140);
+        hold.setOperator(executor);
+        // Замена предыдущего исполнителя (при регистрации автоматически назнач. Глухова)
+        if (prevHold != null) {
+            prevHold.setOperator(executor);
+        }
+        pocard.addAction(hold);
     }
 }

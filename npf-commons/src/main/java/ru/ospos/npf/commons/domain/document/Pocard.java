@@ -26,28 +26,24 @@ public class Pocard extends Document {
      * Номер платежного поручения.
      */
     @Column(name = "MDOCNUMBER")
-    @NaturalId
     private Long number;
 
     /**
      * Дата платежного поручения.
      */
     @Column(name="MDOCDATE")
-    @NaturalId
     private LocalDate documentDate;
 
     /**
      * Дата операции.
      */
     @Column(name="MDATEOP")
-    @NaturalId
     private LocalDate operationDate;
 
     /**
      * Сумма.
      */
     @Column(name = "MSUMMA", columnDefinition = "FLOAT")
-    @NaturalId
     private BigDecimal amount;
 
     /**

@@ -7,13 +7,27 @@
         </encoder>
     </appender>
 
+    <!-- Журналы общего назначения -->
+    <appender name="GENERALPURPOSE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>log/service.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>log/prev/service.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>25MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <root level="INFO">
         <appender-ref ref="STDOUT" />
+        <appender-ref ref="GENERALPURPOSE" />
     </root>
 
-
     <!-- Hibernate SQL logs -->
-
     <appender name="SQLROLLINGFILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>log/hibernate_sql.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -23,9 +37,9 @@
                 <maxFileSize>10MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
-        <layout>
+        <encoder>
             <pattern>%-4date | %msg %n</pattern>
-        </layout>
+        </encoder>
     </appender>
 
     <logger name="org.hibernate.SQL" additivity="false" >
